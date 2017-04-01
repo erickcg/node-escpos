@@ -4,6 +4,7 @@ const qr           = require('qr-image');
 const iconv        = require('iconv-lite');
 const getPixels    = require('get-pixels');
 const Buffer       = require('mutable-buffer');
+const nodeBuffer   = require('buffer').Buffer
 const EventEmitter = require('events');
 const Image        = require('./image');
 const _            = require('./commands');
@@ -282,14 +283,15 @@ Printer.prototype.hardware = function(hw){
 /**
  * [barcode]
  * @param  {[type]}    code     [description]
- * @param  {[type]}    type     [description]
+ * @param  {[type]}    symbology barcode symbology (EAN8, CODE128, etc)
+ * @param  {[type]}    type     variant of the barcode (especially for CODE128)
  * @param  {[type]}    width    [description]
  * @param  {[type]}    height   [description]
  * @param  {[type]}    position [description]
  * @param  {[type]}    font     [description]
  * @return printer instance
  */
-Printer.prototype.barcode = function(code, type, width, height, position, font){
+Printer.prototype.barcode = function(code, symbology, type, width, height, position, font){
   if(width >= 1 || width <= 255){
     this.buffer.write(_.BARCODE_FORMAT.BARCODE_WIDTH);
   }
@@ -303,8 +305,49 @@ Printer.prototype.barcode = function(code, type, width, height, position, font){
     'BARCODE_TXT_' + (position || 'BLW').toUpperCase()
   ]);
   this.buffer.write(_.BARCODE_FORMAT[
-    'BARCODE_' + ((type || 'EAN13').replace('-', '_').toUpperCase())
+    'BARCODE_' + ((symbology || 'EAN13').replace('-', '_').toUpperCase())
   ]);
+
+  if (symbology.toUpperCase() == 'CODE128') {
+    //we have to input the type A, B or C
+    type = type.toUpperCase()
+    if (['A', 'B', 'C'].indexOf(type) > -1) {
+      //required formating to type C
+      if (type == 'C') {
+        if (code.length%2 == 0 && !isNaN(code)) {
+          let CCode = ''
+          for (var i = 1; i < code.length; i += 2) {
+            CCode += String.fromCharCode(code[i-1].concat(code[i]))
+          }
+          code = CCode
+        } else {
+          throw {
+            error: 2,
+            message: 'CODE128 type C must be numbers and be in a even length'
+          }
+        }
+      }
+      //set the type identificator
+      type = '{' + type
+      code = type + code
+      //convert the code length to transmit to hex
+      var hexLength = ''
+      if (code.length < 16) {
+        hexLength = hexLength.concat('0')
+      }
+      hexLength = hexLength.concat(code.length.toString(16))
+
+      //send the message length
+      hexLength = nodeBuffer.from(hexLength, 'hex')
+      this.buffer.write(hexLength)
+    } else {
+      throw {
+            error: 1,
+            message: 'You must choose a barcode type'
+          }
+    }
+  }
+  //finally send the code
   this.buffer.write(code);
   return this;
 };
@@ -361,7 +404,7 @@ Printer.prototype.qrimage = function(content, options, callback){
  * @return {[type]}         [description]
  */
 Printer.prototype.image = function(image, density){
-  if(!(image instanceof Image)) 
+  if(!(image instanceof Image))
     throw new TypeError('Only escpos.Image supported');
   density = density || 'd24';
   var n = !!~[ 'd8', 's8' ].indexOf(density) ? 1 : 3;
@@ -386,11 +429,11 @@ Printer.prototype.image = function(image, density){
  * @return {[type]}       [description]
  */
 Printer.prototype.raster = function (image, mode) {
-  if(!(image instanceof Image)) 
+  if(!(image instanceof Image))
     throw new TypeError('Only escpos.Image supported');
   mode = mode || 'normal';
-  if (mode === 'dhdw' || 
-      mode === 'dwh'  || 
+  if (mode === 'dhdw' ||
+      mode === 'dwh'  ||
       mode === 'dhw') mode = 'dwdh';
   var raster = image.toRaster();
   var header = _.GSV0_FORMAT['GSV0_' + mode.toUpperCase()];
