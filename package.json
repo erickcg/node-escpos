@@ -1,14 +1,14 @@
 {
-  "name": "escpos",
-  "version": "2.4.0",
-  "description": "ESC/POS Printer driver for nodejs",
+  "name": "hgn-escpos",
+  "version": "2.4.1",
+  "description": "ESC/POS Printer driver for nodejs with code128 support",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/song940/node-escpos.git"
+    "url": "git+https://github.com/erickcg/node-escpos.git"
   },
   "keywords": [
     "escpos",
@@ -17,13 +17,14 @@
   "author": "lsong",
   "contributors": [
     "Jose Vera <hola@jose.com.co>",
-    "Sébastien Vidal <Psychopoulet@GitHub.com>"
+    "Sébastien Vidal <Psychopoulet@GitHub.com>",
+    "Erick Castillo <ecastillo550@gmail.com>"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/song940/node-escpos/issues"
+    "url": "https://github.com/erickcg/node-escpos/issues"
   },
-  "homepage": "https://github.com/song940/node-escpos#readme",
+  "homepage": "https://github.com/erickcg/node-escpos#readme",
   "dependencies": {
     "iconv-lite": "*",
     "mutable-buffer": "*"
