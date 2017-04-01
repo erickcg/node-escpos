@@ -1,3 +1,6 @@
+Original repo: https://github.com/song940/node-escpos
+Added support for CODE128 and it's different types A,B and C.
+
 # ESCPOS [![npm version](https://badge.fury.io/js/escpos.svg)](https://www.npmjs.com/package/escpos )
 
 ESC/POS Printer driver for node
@@ -116,8 +119,8 @@ font type could be A or B. Default: A
 width is a numeric value, 1 is for regular size, and 2 is twice the standard size. Default: 1
 height is a numeric value, 1 is for regular size and 2 is twice the standard size. Default: 1
 
-### barcode("code", "barcode_type", width, height, "position", "font")
-
+### barcode("code", "barcode_type", type (null), width, height, "position", "font")
+***type is only used for CODE128
 Prints a barcode.
 
 code is an alphanumeric code to be printed as bar code
@@ -130,6 +133,14 @@ barcode_type must be one of the following type of codes:
 + CODE39
 + ITF
 + NW7
+
+
+### OR  barcode("code", "barcode_type", ['A', 'B', 'C'], width, height, "position", "font")
+
+Prints CODE128 Barcode, you have to specify the type as 'A', 'B' or 'C'.
+C type only accepts numbers and an even length
+
++ CODE128
 
 width is a numeric value in the range between (1,255) Default: 64
 height is a numeric value in the range between (2,6) Default: 3
