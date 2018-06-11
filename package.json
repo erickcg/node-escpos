@@ -1,6 +1,6 @@
 {
   "name": "hgn-escpos",
-  "version": "2.4.1",
+  "version": "2.4.1.1",
   "description": "ESC/POS Printer driver for nodejs with code128 support",
   "main": "index.js",
   "scripts": {
