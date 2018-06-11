@@ -3,7 +3,7 @@ const util         = require('util');
 const qr           = require('qr-image');
 const iconv        = require('iconv-lite');
 const getPixels    = require('get-pixels');
-const Buffer       = require('mutable-buffer');
+const { MutableBuffer }       = require('mutable-buffer');
 const nodeBuffer   = require('buffer').Buffer
 const EventEmitter = require('events');
 const Image        = require('./image');
@@ -21,7 +21,7 @@ function Printer(adapter){
   var self = this;
   EventEmitter.call(this);
   this.adapter = adapter;
-  this.buffer = new Buffer();
+  this.buffer = new MutableBuffer();
 };
 
 /**

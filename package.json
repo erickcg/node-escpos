@@ -27,7 +27,7 @@
   "homepage": "https://github.com/erickcg/node-escpos#readme",
   "dependencies": {
     "iconv-lite": "*",
-    "mutable-buffer": "*"
+    "mutable-buffer": "^2.0.3"
   },
   "optionalDependencies": {
     "get-pixels": "*",
@@ -37,5 +37,8 @@
   },
   "devDependencies": {
     "mocha": "*"
+  },
+  "engines": {
+    "node": ">=8.x"
   }
 }
